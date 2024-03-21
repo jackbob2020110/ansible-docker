@@ -1,28 +1,18 @@
-FROM alpine:3.4
+FROM alpine
 
-RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories  && \
     apk --update add sudo                                         && \
-    \
-    \
     echo "===> Adding Python runtime..."  && \
-    apk --update add python py-pip openssl ca-certificates    && \
+    apk --update add python3 py-pip openssl ca-certificates    && \
     apk --update add --virtual build-dependencies \
-                python-dev libffi-dev openssl-dev build-base  && \
-    pip install --upgrade pip cffi                            && \
-    \
-    \
+                python3-dev libffi-dev openssl-dev build-base  && \
+    pip install --upgrade pip cffi -i https://mirrors.aliyun.com/pypi/simple                            && \
     echo "===> Installing handy tools (not absolutely required)..."  && \
     apk --update add sshpass openssh-client rsync krb5 krb5-dev && \
-    \
-    \
     echo "===> Installing Ansible..."  && \
-    pip install ansible==2.5.7         && \
-    \
-    \
+    pip install ansible  -i https://mirrors.aliyun.com/pypi/simple       && \
     echo "===> Installing pip packages ..."  && \
-    pip install pywinrm xmltodict kerberos requests_kerberos && \
-    \
-    \
+    pip install pywinrm requests-credssp xmltodict kerberos requests_kerberos -i https://mirrors.aliyun.com/pypi/simple&& \
     echo "===> Removing package list..."  && \
     apk del build-dependencies            && \
     rm -rf /var/cache/apk/*
